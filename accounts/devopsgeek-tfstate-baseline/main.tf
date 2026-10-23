@@ -6,6 +6,14 @@ data "terraform_remote_state" "account" {
   }
 }
 
+data "terraform_remote_state" "kubeadm_platform_account" {
+  backend = "local"
+
+  config = {
+    path = "../kubeadm-platform-account/terraform.tfstate"
+  }
+}
+
 module "baseline" {
   source = "../../modules/account-baseline"
 
@@ -77,4 +85,42 @@ resource "aws_s3_bucket_lifecycle_configuration" "tfstate" {
       days_after_initiation = 7
     }
   }
+}
+
+resource "aws_s3_bucket_policy" "tfstate" {
+  provider = aws.target
+  bucket   = aws_s3_bucket.tfstate.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "KubeadmPlatformObjectAccess"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${data.terraform_remote_state.kubeadm_platform_account.outputs.account_id}:root"
+        }
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+        ]
+        Resource = "${aws_s3_bucket.tfstate.arn}/kubeadm-platform/*"
+      },
+      {
+        Sid    = "KubeadmPlatformListOwnPrefix"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${data.terraform_remote_state.kubeadm_platform_account.outputs.account_id}:root"
+        }
+        Action   = "s3:ListBucket"
+        Resource = aws_s3_bucket.tfstate.arn
+        Condition = {
+          StringLike = {
+            "s3:prefix" = ["kubeadm-platform/*"]
+          }
+        }
+      }
+    ]
+  })
 }
