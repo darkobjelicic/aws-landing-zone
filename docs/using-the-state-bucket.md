@@ -7,12 +7,13 @@
 - Single-root project: `<project-name>/terraform.tfstate`
 - Multi-root project: `<project-name>/<component>/terraform.tfstate`, where `<component>` is the actual name of that Terraform root directory (not a generic placeholder)
 
-Example — `aws-kubeadm-platform` has separate Terraform roots (`networking/`, `compute/`, `iam/`, `github-oidc/`), so it uses one key per root:
+Example — `aws-kubeadm-platform` has separate Terraform roots (`networking/`, `compute/`, `iam/`), so it uses one key per root:
 
 kubeadm-platform/networking/terraform.tfstate
 kubeadm-platform/compute/terraform.tfstate
 kubeadm-platform/iam/terraform.tfstate
-kubeadm-platform/github-oidc/terraform.tfstate
+
+**Exception - CI/CD bootstrap roots use local state, not this bucket.** A root that creates the IAM identity CI/CD itself depends on (e.g. `aws-kubeadm-platform`'s `github-oidc/`, which creates the GitHub Actions OIDC provider + deploy role) must stay independent of every other piece of shared infrastructure, including this bucket - so it keeps `backend "local"` and is never listed here. Same reasoning as why `aws-landing-zone`'s own `organization/`/`accounts/*` roots use local state.
 
 ## Granting a new project access
 
