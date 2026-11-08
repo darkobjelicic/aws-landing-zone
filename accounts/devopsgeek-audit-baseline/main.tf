@@ -1,8 +1,10 @@
 data "terraform_remote_state" "account" {
-  backend = "local"
+  backend = "s3"
 
   config = {
-    path = "../devopsgeek-audit-account/terraform.tfstate"
+    bucket = "devopsgeek-tfstate-942893240157"
+    key    = "landing-zone/devopsgeek-audit-account/terraform.tfstate"
+    region = "eu-central-1"
   }
 }
 

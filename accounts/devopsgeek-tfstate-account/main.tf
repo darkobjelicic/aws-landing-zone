@@ -1,8 +1,10 @@
 data "terraform_remote_state" "organization" {
-  backend = "local"
+  backend = "s3"
 
   config = {
-    path = "../../organization/terraform.tfstate"
+    bucket = "devopsgeek-tfstate-942893240157"
+    key    = "landing-zone/organization/terraform.tfstate"
+    region = "eu-central-1"
   }
 }
 

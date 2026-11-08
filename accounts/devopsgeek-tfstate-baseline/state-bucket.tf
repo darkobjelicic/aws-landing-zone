@@ -95,6 +95,33 @@ resource "aws_s3_bucket_policy" "tfstate" {
             "s3:prefix" = ["kubeadm-platform/*"]
           }
         }
+      },
+      {
+        Sid    = "LandingZoneObjectAccess"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::028872333933:root"
+        }
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+        ]
+        Resource = "${aws_s3_bucket.tfstate.arn}/landing-zone/*"
+      },
+      {
+        Sid    = "LandingZoneListOwnPrefix"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::028872333933:root"
+        }
+        Action   = "s3:ListBucket"
+        Resource = aws_s3_bucket.tfstate.arn
+        Condition = {
+          StringLike = {
+            "s3:prefix" = ["landing-zone/*"]
+          }
+        }
       }
     ]
   })
