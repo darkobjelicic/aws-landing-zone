@@ -1,8 +1,10 @@
 data "terraform_remote_state" "organization" {
-  backend = "local"
+  backend = "s3"
 
   config = {
-    path = "../../organization/terraform.tfstate"
+    bucket = "devopsgeek-tfstate-942893240157"
+    key    = "landing-zone/organization/terraform.tfstate"
+    region = "eu-central-1"
   }
 }
 
@@ -12,5 +14,5 @@ module "this" {
   account_name  = "devopsgeek-log-archive"
   account_email = "darko.bjelicic99+devopsgeeklogarchive@gmail.com"
   parent_id     = data.terraform_remote_state.organization.outputs.security_ou_id
-  tags          = { Purpose = "Centralized log archive - reserved - not yet active" }
+  tags = { Purpose = "Centralized log archive for aws-kubeadm-platform VPC Flow Logs" }
 }

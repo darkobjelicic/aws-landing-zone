@@ -7,10 +7,12 @@ data "terraform_remote_state" "account" {
 }
 
 data "terraform_remote_state" "kubeadm_platform_account" {
-  backend = "local"
+  backend = "s3"
 
   config = {
-    path = "../kubeadm-platform-account/terraform.tfstate"
+    bucket = "devopsgeek-tfstate-942893240157"
+    key    = "landing-zone/kubeadm-platform-account/terraform.tfstate"
+    region = "eu-central-1"
   }
 }
 

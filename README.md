@@ -18,7 +18,7 @@ All four OUs have a `deny_leave_org` SCP attached.
 | `devopsgeek` | (management, root) | Organization root. Already existed, not managed by this Terraform. |
 | `devopsgeek-tfstate` | Infrastructure | Terraform remote state storage |
 | `kubeadm-platform` | Workloads | Workload account for [aws-kubeadm-platform](https://github.com/darkobjelicic/aws-kubeadm-platform) |
-| `devopsgeek-log-archive` | Security | Centralized log archive (reserved, not yet active - no CloudTrail trail configured) |
+| `devopsgeek-log-archive` | Security | Centralized log archive - currently receives VPC Flow Logs from [aws-kubeadm-platform](https://github.com/darkobjelicic/aws-kubeadm-platform); no CloudTrail trail configured yet |
 | `devopsgeek-audit` | Security | Security tooling; Access Analyzer delegated administrator for the whole organization |
 
 Every account gets, via `modules/account-baseline`: S3 account-level public access block, EBS encryption by default. `devopsgeek-audit` additionally hosts the single ORGANIZATION-type IAM Access Analyzer covering all accounts.
@@ -38,3 +38,4 @@ Every account gets, via `modules/account-baseline`: S3 account-level public acce
 - [docs/apply-order.md](docs/apply-order.md) - Terraform apply sequence, read before running anything
 - [docs/using-the-state-bucket.md](docs/using-the-state-bucket.md) - shared state bucket conventions, for this and future projects
 - [docs/state-recovery.md](docs/state-recovery.md) - recovering from a lost state file
+- [docs/remote-state-migration.md](docs/remote-state-migration.md) - migrating each root from local state to the shared S3 backend, and wiring up CI
